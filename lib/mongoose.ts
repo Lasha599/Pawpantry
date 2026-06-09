@@ -13,7 +13,11 @@ if (!cache.mongoose) {
 export async function connectDB() {
   if (cache.mongoose!.conn) return cache.mongoose!.conn;
   if (!cache.mongoose!.promise) {
-    cache.mongoose!.promise = mongoose.connect(MONGODB_URI);
+    cache.mongoose!.promise = mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 10000,
+      bufferCommands: false,
+    });
   }
   cache.mongoose!.conn = await cache.mongoose!.promise;
   return cache.mongoose!.conn;
