@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { Dog } from './recommend';
 
-export type User = { name: string; email: string };
+export type User = { id?: string; name: string; email: string };
 
 export type Subscription = {
   id: string;
@@ -30,6 +30,17 @@ export type State = {
 };
 
 const KEY = 'pawpantry:state:v1';
+const TOKEN_KEY = 'pawpantry:token:v1';
+
+export function getToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(TOKEN_KEY, token);
+}
 
 const initial: State = {
   user: null,
@@ -57,6 +68,7 @@ export function saveState(s: State) {
 export function resetState() {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(KEY);
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 export function useStore() {

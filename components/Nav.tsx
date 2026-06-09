@@ -17,7 +17,10 @@ export default function Nav() {
           {hydrated && state.user ? (
             <Link href="/dashboard" className="btn-primary text-sm">Dashboard</Link>
           ) : (
-            <Link href="/register" className="btn-primary text-sm">Get started</Link>
+            <>
+              <Link href="/login" className="btn-ghost text-sm">Sign in</Link>
+              <Link href="/register" className="btn-primary text-sm">Get started</Link>
+            </>
           )}
           {hydrated && state.user && (
             <button
