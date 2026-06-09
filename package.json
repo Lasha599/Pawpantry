@@ -15,7 +15,8 @@
     "lucide-react": "^0.408.0",
     "mongoose": "^8.4.4",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "cheerio": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
