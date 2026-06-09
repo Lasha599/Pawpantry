@@ -25,14 +25,20 @@ export async function POST(req: NextRequest) {
   // Scrape ZooMart
   try {
     const items = await scrapeZooMart(5);
+    let saved = 0;
     for (const item of items) {
-      await ScrapedProduct.findOneAndUpdate(
-        { url: item.url },
-        { ...item, scrapedAt: new Date() },
-        { upsert: true },
-      );
+      try {
+        await ScrapedProduct.findOneAndUpdate(
+          { url: item.url },
+          { ...item, scrapedAt: new Date() },
+          { upsert: true, new: true },
+        );
+        saved++;
+      } catch (saveErr: unknown) {
+        results.errors.push(`ZooMart save: ${saveErr instanceof Error ? saveErr.message : 'save error'}`);
+      }
     }
-    results.zoomart = items.length;
+    results.zoomart = saved;
   } catch (e: unknown) {
     results.errors.push(`ZooMart: ${e instanceof Error ? e.message : 'error'}`);
   }
@@ -40,14 +46,20 @@ export async function POST(req: NextRequest) {
   // Scrape PetFood
   try {
     const items = await scrapePetFood(3);
+    let saved = 0;
     for (const item of items) {
-      await ScrapedProduct.findOneAndUpdate(
-        { url: item.url },
-        { ...item, scrapedAt: new Date() },
-        { upsert: true },
-      );
+      try {
+        await ScrapedProduct.findOneAndUpdate(
+          { url: item.url },
+          { ...item, scrapedAt: new Date() },
+          { upsert: true, new: true },
+        );
+        saved++;
+      } catch (saveErr: unknown) {
+        results.errors.push(`PetFood save: ${saveErr instanceof Error ? saveErr.message : 'save error'}`);
+      }
     }
-    results.petfood = items.length;
+    results.petfood = saved;
   } catch (e: unknown) {
     results.errors.push(`PetFood: ${e instanceof Error ? e.message : 'error'}`);
   }
