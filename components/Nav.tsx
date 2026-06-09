@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useStore, resetState } from '@/lib/store';
-import { PawPrint } from 'lucide-react';
+import { PawPrint, LogOut } from 'lucide-react';
 
 export default function Nav() {
   const { state, hydrated } = useStore();
@@ -25,15 +25,14 @@ export default function Nav() {
           {hydrated && state.user && (
             <button
               onClick={() => {
-                if (confirm('Reset demo data and log out?')) {
-                  resetState();
-                  window.location.href = '/';
-                }
+                resetState();
+                window.location.href = '/';
               }}
-              className="btn-ghost text-xs text-muted"
-              title="Reset demo"
+              className="btn-ghost text-sm flex items-center gap-1.5 text-muted hover:text-ink"
+              title="Sign out"
             >
-              reset
+              <LogOut className="w-4 h-4" />
+              Sign out
             </button>
           )}
         </div>
