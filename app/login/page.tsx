@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
-import { useStore, setToken } from '@/lib/store';
+import { useStore, setToken, loadStateFromServer } from '@/lib/store';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,7 +30,12 @@ export default function LoginPage() {
     if (!res.ok) { setError(data.error ?? 'Something went wrong.'); return; }
 
     setToken(data.token);
-    update(s => ({ ...s, user: { id: data.user.id, name: data.user.name, email: data.user.email } }));
+    const serverState = await loadStateFromServer();
+    update(s => ({
+      ...s,
+      user: { id: data.user.id, name: data.user.name, email: data.user.email },
+      ...(serverState ?? {}),
+    }));
     router.push('/dashboard');
   };
 

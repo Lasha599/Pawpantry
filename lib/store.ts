@@ -71,6 +71,30 @@ export function resetState() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+export async function loadStateFromServer(): Promise<Partial<State> | null> {
+  const token = getToken();
+  if (!token || typeof window === 'undefined') return null;
+  try {
+    const res = await fetch('/api/user/state', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+function syncToServer(s: State) {
+  const token = getToken();
+  if (!token || typeof window === 'undefined' || !s.user) return;
+  fetch('/api/user/state', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ dogs: s.dogs, subscriptions: s.subscriptions, history: s.history }),
+  }).catch(() => {});
+}
+
 export function useStore() {
   const [state, setState] = useState<State>(initial);
   const [hydrated, setHydrated] = useState(false);
@@ -79,6 +103,14 @@ export function useStore() {
     setState(loadState());
     setHydrated(true);
   }, []);
+
+  // Auto-save dogs/subscriptions/history to MongoDB whenever they change
+  useEffect(() => {
+    if (hydrated && state.user) {
+      syncToServer(state);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.dogs, state.subscriptions, state.history, hydrated]);
 
   const update = (fn: (s: State) => State) => {
     setState(prev => {
