@@ -6,10 +6,11 @@ import { scrapePetFood } from '@/lib/scrapers/petfood';
 
 export const maxDuration = 60;
 
-// Protect with a secret so only Vercel cron or you can trigger it
+// Protect with a secret — accepts header OR query param
 function isAuthorized(req: NextRequest): boolean {
-  const secret = req.headers.get('x-scrape-secret');
-  return secret === process.env.SCRAPE_SECRET;
+  const header = req.headers.get('x-scrape-secret');
+  const query = new URL(req.url).searchParams.get('secret');
+  return header === process.env.SCRAPE_SECRET || query === process.env.SCRAPE_SECRET;
 }
 
 export async function POST(req: NextRequest) {
