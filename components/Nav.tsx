@@ -15,7 +15,10 @@ export default function Nav() {
         <div className="flex items-center gap-2">
           <Link href="/catalog" className="btn-ghost text-sm">Catalog</Link>
           {hydrated && state.user ? (
-            <Link href="/dashboard" className="btn-primary text-sm">Dashboard</Link>
+            <>
+              <Link href="/profile" className="btn-ghost text-sm">Profile</Link>
+              <Link href="/dashboard" className="btn-primary text-sm">Dashboard</Link>
+            </>
           ) : (
             <>
               <Link href="/login" className="btn-ghost text-sm">Sign in</Link>

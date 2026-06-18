@@ -22,11 +22,19 @@ export type OrderHistoryItem = {
   deliveredAt: string;
 };
 
+export type Address = {
+  street: string;
+  city: string;
+  zip: string;
+  country: string;
+};
+
 export type State = {
   user: User | null;
   dogs: Dog[];
   subscriptions: Subscription[];
   history: OrderHistoryItem[];
+  address: Address | null;
 };
 
 const KEY = 'pawpantry:state:v1';
@@ -47,6 +55,7 @@ const initial: State = {
   dogs: [],
   subscriptions: [],
   history: [],
+  address: null,
 };
 
 export function loadState(): State {
@@ -91,7 +100,7 @@ function syncToServer(s: State) {
   fetch('/api/user/state', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ dogs: s.dogs, subscriptions: s.subscriptions, history: s.history }),
+    body: JSON.stringify({ dogs: s.dogs, subscriptions: s.subscriptions, history: s.history, address: s.address }),
   }).catch(() => {});
 }
 
@@ -104,13 +113,13 @@ export function useStore() {
     setHydrated(true);
   }, []);
 
-  // Auto-save dogs/subscriptions/history to MongoDB whenever they change
+  // Auto-save dogs/subscriptions/history/address to MongoDB whenever they change
   useEffect(() => {
     if (hydrated && state.user) {
       syncToServer(state);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.dogs, state.subscriptions, state.history, hydrated]);
+  }, [state.dogs, state.subscriptions, state.history, state.address, hydrated]);
 
   const update = (fn: (s: State) => State) => {
     setState(prev => {

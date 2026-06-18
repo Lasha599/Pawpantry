@@ -5,6 +5,7 @@ const UserStateSchema = new mongoose.Schema({
   dogs:          { type: Array, default: [] },
   subscriptions: { type: Array, default: [] },
   history:       { type: Array, default: [] },
+  address:       { type: Object, default: null },
   updatedAt:     { type: Date, default: Date.now },
 });
 

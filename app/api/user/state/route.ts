@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
       dogs:          doc?.dogs          ?? [],
       subscriptions: doc?.subscriptions ?? [],
       history:       doc?.history       ?? [],
+      address:       doc?.address       ?? null,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Server error';
@@ -37,11 +38,11 @@ export async function PUT(req: NextRequest) {
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const { dogs, subscriptions, history } = await req.json();
+    const { dogs, subscriptions, history, address } = await req.json();
     await connectDB();
     await UserState.findOneAndUpdate(
       { userId },
-      { dogs, subscriptions, history, updatedAt: new Date() },
+      { dogs, subscriptions, history, address, updatedAt: new Date() },
       { upsert: true },
     );
     return NextResponse.json({ ok: true });
