@@ -29,7 +29,10 @@ export async function POST(req: NextRequest) {
       { resetToken: token, resetTokenExpiry: expiry },
     );
 
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
+    const host = req.headers.get('host') || '';
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${protocol}://${host}`;
+    const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
     await resend.emails.send({
       from: 'PawPantry <onboarding@resend.dev>',
